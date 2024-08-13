@@ -98,7 +98,7 @@ const IDENTS: set[char] = { 'a'..'z', 'A'..'Z', '_', '0'..'9' }
 
 const SPACES: set[char] = { ' ', '\n', '\r' }
 
-type Lexeme = ref object of RootObj
+type Lexeme* = ref object of RootObj
     position*: uint
     length*: uint
     kind*: LexemeKind
@@ -118,46 +118,46 @@ func init_lexer*(source: string): Lexer =
         lexemes: @[]
     )
 
-method advance(lexer: Lexer, steps: uint = 1'u): void {.base, inline.} =
+proc advance(lexer: Lexer, steps: uint = 1'u): void {.inline.} =
     lexer.position += steps
 
-method finished(lexer: Lexer): bool {.base, inline.} =
+func finished(lexer: Lexer): bool {.inline.} =
     return lexer.position >= lexer.length
 
-method unfinished(lexer: Lexer): bool {.base, inline.} =
+func unfinished(lexer: Lexer): bool {.inline.} =
     return lexer.position < lexer.length
 
-method next(lexer: Lexer): char {.base, inline.} =
+func next(lexer: Lexer): char {.inline.} =
     if lexer.position + 1'u < lexer.length:
         return lexer.source[lexer.position + 1'u]
     else:
         return '\0'
 
-method current(lexer: Lexer): char {.base, inline.} =
+func current(lexer: Lexer): char {.inline.} =
     if lexer.position < lexer.length:
         return lexer.source[lexer.position]
     else:
         return '\0'
 
-method previous(lexer: Lexer): char {.base, inline.} =
+func previous(lexer: Lexer): char {.inline.} =
     if lexer.position == 0'u:
         return '\0'
     else:
         return lexer.source[lexer.position - 1'u]
 
-method slice(lexer: Lexer, start_position: uint, end_position: uint): string {.base, inline.} =
+func slice(lexer: Lexer, start_position: uint, end_position: uint): string {.inline.} =
     return lexer.source[start_position..min(end_position, lexer.length) - 1'u]
 
-method print_lexemes*(lexer: Lexer): void {.base.} =
+proc print_lexemes*(lexer: Lexer): void =
     for lexeme in lexer.lexemes:
         echo &"Type: {$lexeme.kind:16} Value: `{lexeme.value}`"
 
-method skip_spaces(lexer: Lexer): void {.base, inline.} =
+proc skip_spaces(lexer: Lexer): void {.inline.} =
     lexer.advance
     while lexer.current in SPACES:
         lexer.advance
 
-method eat_separator(lexer: Lexer): void {.base, inline.} =
+proc eat_separator(lexer: Lexer): void {.inline.} =
     lexer.lexemes.add(
         Lexeme(
             position: lexer.position,
@@ -168,7 +168,7 @@ method eat_separator(lexer: Lexer): void {.base, inline.} =
     )
     lexer.advance
 
-method eat_word(lexer: Lexer): void {.base, inline.} =
+proc eat_word(lexer: Lexer): void {.inline.} =
     let start_position: uint = lexer.position
     lexer.advance
     while lexer.current in IDENTS:
@@ -185,7 +185,7 @@ method eat_word(lexer: Lexer): void {.base, inline.} =
         )
     )
 
-method eat_operator(lexer: Lexer): void {.base, inline.} =
+proc eat_operator(lexer: Lexer): void {.inline.} =
     let start_position: uint = lexer.position
     lexer.advance
     while lexer.current in OPS:
@@ -200,7 +200,7 @@ method eat_operator(lexer: Lexer): void {.base, inline.} =
         )
     )
 
-method eat_number(lexer: Lexer): void {.base, inline.} =
+proc eat_number(lexer: Lexer): void {.inline.} =
     let start_position: uint = lexer.position
     lexer.advance
     while lexer.current in DIGITS_U:
@@ -220,7 +220,7 @@ method eat_number(lexer: Lexer): void {.base, inline.} =
                 position: start_position,
                 length: lexer.position - start_position,
                 kind: Float,
-                value: lexer.slice(start_position, lexer.position)
+                value: lexer.slice(start_position, lexer.position).multiReplace(("_", ""))
             )
         )
     else:
@@ -229,11 +229,11 @@ method eat_number(lexer: Lexer): void {.base, inline.} =
                 position: start_position,
                 length: lexer.position - start_position,
                 kind: Integer,
-                value: lexer.slice(start_position, lexer.position)
+                value: lexer.slice(start_position, lexer.position).multiReplace(("_", ""))
             )
         )
 
-method eat_string(lexer: Lexer): void =
+proc eat_string(lexer: Lexer): void {.inline.} =
     let start_position: uint = lexer.position
     lexer.advance
     while lexer.unfinished and lexer.current != '"':
@@ -252,7 +252,7 @@ method eat_string(lexer: Lexer): void =
         )
     )
 
-method skip_comment(lexer: Lexer): void {.base, inline.} =
+proc skip_comment(lexer: Lexer): void {.inline.} =
     lexer.advance
     while lexer.unfinished and lexer.current != '`':
         lexer.advance
@@ -261,7 +261,7 @@ method skip_comment(lexer: Lexer): void {.base, inline.} =
 
     lexer.advance
 
-method analyse*(lexer: Lexer): void {.base.} =
+proc analyse*(lexer: Lexer): void =
     while lexer.current != '\0':
         
         if lexer.current in SPACES:

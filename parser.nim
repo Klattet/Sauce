@@ -17,8 +17,8 @@ type Parser = ref object of RootObj
     position: uint
     lexemes: ref seq[Lexeme]
 
-method current(parser: Parser): Lexeme =
+proc current(parser: Parser): Lexeme =
     return parser.lexemes[lexer.position]
 
-method parse_statement(parser: Parser): Statement =
-    assert parser
+proc parse_statement(parser: Parser): Statement =
+    assert parser.current.type
