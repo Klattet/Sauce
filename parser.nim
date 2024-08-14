@@ -1,24 +1,11 @@
-import lexer
-
-type
-    Node = ref object of RootObj
-    
-    Statement = ref object of Node
-    
-    Expression = ref object of Node
-    
-    PrimaryExpression = ref object of Expression
-    
-    Identifier = ref object of PrimaryExpression
-        value: string
-    
+import types
 
 type Parser = ref object of RootObj
     position: uint
-    lexemes: ref seq[Lexeme]
+    lexemes: ref seq[Node]
 
-proc current(parser: Parser): Lexeme =
-    return parser.lexemes[lexer.position]
+proc current(parser: Parser): Node =
+    return parser.lexemes[parser.position]
 
-proc parse_statement(parser: Parser): Statement =
-    assert parser.current.type
+proc expect_keyword(lexeme: Node): Keyword =
+    assert lexeme of Keyword

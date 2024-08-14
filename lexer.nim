@@ -1,116 +1,17 @@
-import strutils, strformat
+import typetraits
+import strformat
 import std/sets
+import strutils
 
-type LexemeKind = enum
-    String
-    Integer
-    Float
-    Operator
-    Identifier
-
-    ParenthesisOpen
-    ParenthesisClose
-    BracketOpen
-    BracketClose
-    BraceOpen
-    BraceClose
-    Comma
-    SemiColon
-
-    If
-    Else
-    Var
-    Val
-
-func to_separator(value: char): LexemeKind {.inline.} =
-    case value
-    of '(': return ParenthesisOpen
-    of ')': return ParenthesisClose
-    of '[': return BracketOpen
-    of ']': return BracketClose
-    of '{': return BraceOpen
-    of '}': return BraceClose
-    of ',': return Comma
-    of ';': return SemiColon
-    else:
-        assert false, "This should never happen"
-
-
-func to_keyword(value: string): LexemeKind {.inline.} =
-    case value
-    of "if": return If
-    of "else": return Else
-    of "var": return Var
-    of "val": return Val
-    else:
-        assert false, "This should never happen"
-
-const SEPS: set[char] = {
-    '(',
-    ')',
-    '[',
-    ']',
-    '{',
-    '}',
-    ',',
-    ';'
-}
-
-const OPS: set[char] = {
-    '\'',
-    '=',
-    '+',
-    '-',
-    '^',
-    '~',
-    '*',
-    '@',
-    '!',
-    '?',
-    '#',
-    '$',
-    '&',
-    '\\',
-    '/',
-    '|',
-    '<',
-    '>',
-    '.',
-    ':'
-}
-
-const KEYWORDS: HashSet[string] = toHashSet([
-    "if",
-    "else",
-    "var",
-    "val"
-])
-
-const DIGITS: set[char] = { '0'..'9' }
-
-const DIGITS_U: set[char] = { '0'..'9', '_' }
-
-const ALPHAS: set[char] = { 'a'..'z', 'A'..'Z' }
-
-const ALPHAS_U: set[char] = { 'a'..'z', 'A'..'Z', '_' }
-
-const IDENTS: set[char] = { 'a'..'z', 'A'..'Z', '_', '0'..'9' }
-
-const SPACES: set[char] = { ' ', '\n', '\r' }
-
-type Lexeme* = ref object of RootObj
-    position*: uint
-    length*: uint
-    kind*: LexemeKind
-    value*: string
+import types
 
 type Lexer = ref object of RootObj
     position: uint
     length: uint
     source: string
-    lexemes*: seq[Lexeme]
+    lexemes*: seq[Node]
 
-func init_lexer*(source: string): Lexer =
+func init_lexer*(source: var string): Lexer =
     return Lexer(
         position: 0'u,
         length: uint(source.len),
@@ -118,7 +19,7 @@ func init_lexer*(source: string): Lexer =
         lexemes: @[]
     )
 
-proc advance(lexer: Lexer, steps: uint = 1'u): void {.inline.} =
+proc advance(lexer: var Lexer, steps: uint = 1'u): void {.inline.} =
     lexer.position += steps
 
 func finished(lexer: Lexer): bool {.inline.} =
@@ -146,137 +47,165 @@ func previous(lexer: Lexer): char {.inline.} =
         return lexer.source[lexer.position - 1'u]
 
 func slice(lexer: Lexer, start_position: uint, end_position: uint): string {.inline.} =
-    return lexer.source[start_position..min(end_position, lexer.length) - 1'u]
+    return lexer.source[start_position..<min(end_position, lexer.length)]
 
 proc print_lexemes*(lexer: Lexer): void =
     for lexeme in lexer.lexemes:
-        echo &"Type: {$lexeme.kind:16} Value: `{lexeme.value}`"
+        if lexeme of String:
+            echo &"{cast[String](lexeme).type.name}: {cast[String](lexeme).value}"
+        elif lexeme of Integer:
+            echo &"{cast[Integer](lexeme).type.name}: {cast[Integer](lexeme).value}"
+        elif lexeme of Float:
+            echo &"{cast[Float](lexeme).type.name}: {cast[Float](lexeme).value}"
+        elif lexeme of Operator:
+            echo &"{cast[Operator](lexeme).type.name}: {cast[Operator](lexeme).value}"
+        elif lexeme of Identifier:
+            echo &"{cast[Identifier](lexeme).type.name}: {cast[Identifier](lexeme).value}"
+        elif lexeme of Separator:
+            echo &"{cast[Separator](lexeme).type.name}: {$cast[Separator](lexeme).kind}"
+        elif lexeme of Keyword:
+            echo &"{cast[Keyword](lexeme).type.name}: {$cast[Keyword](lexeme).kind}"
+        else:
+            assert false, "Node shouldn't be here."
 
-proc skip_spaces(lexer: Lexer): void {.inline.} =
+proc skip_spaces(lexer: var Lexer): void {.inline.} =
     lexer.advance
-    while lexer.current in SPACES:
+    while lexer.current in SPACE_LITERALS:
         lexer.advance
 
-proc eat_separator(lexer: Lexer): void {.inline.} =
+proc skip_comment(lexer: var Lexer): void {.inline.} =
+    lexer.advance
+    while lexer.unfinished and lexer.current != '`':
+        lexer.advance
+    
+    assert lexer.current == '`', "Invalid comment format."
+    
+    lexer.advance
+
+proc eat_separator(lexer: var Lexer): void {.inline.} =
+    {.warning[HoleEnumConv]:off.}
     lexer.lexemes.add(
-        Lexeme(
+        Separator(
+            source: lexer.source,
             position: lexer.position,
             length: 1'u,
-            kind: lexer.current.to_separator,
-            value: $lexer.current
+            kind: SeparatorKind(lexer.current)
         )
     )
     lexer.advance
+    #{.warning[HoleEnumConv]:on.}
 
-proc eat_word(lexer: Lexer): void {.inline.} =
+proc eat_word(lexer: var Lexer): void {.inline.} =
     let start_position: uint = lexer.position
     lexer.advance
-    while lexer.current in IDENTS:
+    while lexer.current in IDENT_LITERALS:
         lexer.advance
     
     let value = lexer.slice(start_position, lexer.position)
-
-    lexer.lexemes.add(
-        Lexeme(
-            position: start_position,
-            length: lexer.position - start_position,
-            kind: (if value in KEYWORDS: value.to_keyword else: Identifier),
-            value: value
+    
+    if value in KEYWORD_LITERALS:
+        lexer.lexemes.add(
+            Keyword(
+                source: lexer.source,
+                position: start_position,
+                length: lexer.position - start_position,
+                kind: parseEnum[KeywordKind](value)
+            )
         )
-    )
+    else:
+        lexer.lexemes.add(
+            Identifier(
+                source: lexer.source,
+                position: start_position,
+                length: lexer.position - start_position,
+                value: value
+            )
+        )
+        
 
-proc eat_operator(lexer: Lexer): void {.inline.} =
+proc eat_operator(lexer: var Lexer): void {.inline.} =
     let start_position: uint = lexer.position
     lexer.advance
-    while lexer.current in OPS:
+    while lexer.current in OPERATOR_LITERALS:
         lexer.advance
 
     lexer.lexemes.add(
-        Lexeme(
+        Operator(
+            source: lexer.source,
             position: start_position,
             length: lexer.position - start_position,
-            kind: Operator,
             value: lexer.slice(start_position, lexer.position)
         )
     )
 
-proc eat_number(lexer: Lexer): void {.inline.} =
+proc eat_number(lexer: var Lexer): void {.inline.} =
     let start_position: uint = lexer.position
     lexer.advance
-    while lexer.current in DIGITS_U:
+    while lexer.current in DIGIT_UNDERSCORE_LITERALS:
         lexer.advance
 
-    assert lexer.previous != '_' and lexer.current notin ALPHAS, "Invalid number format."
+    assert lexer.previous != '_' and lexer.current notin ALPHA_LITERALS, "Invalid number format."
 
-    if lexer.current == '.' and lexer.next in DIGITS:
+    if lexer.current == '.' and lexer.next in DIGIT_LITERALS:
         lexer.advance(2'u)
-        while lexer.current in DIGITS_U:
+        while lexer.current in DIGIT_UNDERSCORE_LITERALS:
             lexer.advance
 
-        assert lexer.previous != '_' and lexer.current notin ALPHAS, "Invalid number format."
+        assert lexer.previous != '_' and lexer.current notin ALPHA_LITERALS, "Invalid number format."
 
         lexer.lexemes.add(
-            Lexeme(
+            Float(
+                source: lexer.source,
                 position: start_position,
                 length: lexer.position - start_position,
-                kind: Float,
                 value: lexer.slice(start_position, lexer.position).multiReplace(("_", ""))
             )
         )
     else:
         lexer.lexemes.add(
-            Lexeme(
+            Integer(
+                source: lexer.source,
                 position: start_position,
                 length: lexer.position - start_position,
-                kind: Integer,
                 value: lexer.slice(start_position, lexer.position).multiReplace(("_", ""))
             )
         )
 
-proc eat_string(lexer: Lexer): void {.inline.} =
+proc eat_string(lexer: var Lexer): void {.inline.} =
     let start_position: uint = lexer.position
     lexer.advance
     while lexer.unfinished and lexer.current != '"':
-        lexer.advance(if lexer.current == '\\': 2'u else: 1)
+        lexer.advance(if lexer.current == '\\': 2'u else: 1'u)
 
     assert lexer.current == '"', "Invalid string format."
 
     lexer.advance
 
     lexer.lexemes.add(
-        Lexeme(
+        String(
+            source: lexer.source,
             position: start_position,
             length: lexer.position - start_position,
-            kind: String,
             value: lexer.slice(start_position + 1'u, lexer.position - 1'u)
         )
     )
 
-proc skip_comment(lexer: Lexer): void {.inline.} =
-    lexer.advance
-    while lexer.unfinished and lexer.current != '`':
-        lexer.advance
-
-    assert lexer.current == '`', "Invalid comment format."
-
-    lexer.advance
-
-proc analyse*(lexer: Lexer): void =
+proc analyse*(lexer: var Lexer): void =
     while lexer.current != '\0':
         
-        if lexer.current in SPACES:
+        if lexer.current in SPACE_LITERALS:
             lexer.skip_spaces
         
-        elif lexer.current in ALPHAS_U:
+        elif lexer.current in ALPHA_UNDERSCORE_LITERALS:
             lexer.eat_word
         
-        elif lexer.current in SEPS:
+        elif lexer.current in SEPARATOR_LITERALS:
             lexer.eat_separator
 
-        elif lexer.current in OPS:
+        elif lexer.current in OPERATOR_LITERALS:
             lexer.eat_operator
 
-        elif lexer.current in DIGITS:
+        elif lexer.current in DIGIT_LITERALS:
             lexer.eat_number
 
         elif lexer.current == '"':

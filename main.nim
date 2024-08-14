@@ -3,7 +3,7 @@ import times, strformat
 import lexer
 
 proc main() =
-    let source = readFile("main.nim")
+    var source: string = readFile("main.nim")
     var lexer = init_lexer(source)
     
     let start = epochTime()
@@ -14,4 +14,5 @@ proc main() =
     
     echo &"That took {(stop - start):.6f} seconds."
 
-main()
+when isMainModule:
+    main()
