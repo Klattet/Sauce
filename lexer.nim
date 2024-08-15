@@ -101,7 +101,7 @@ proc eat_word(lexer: var Lexer): void {.inline.} =
     while lexer.current in IDENT_LITERALS:
         lexer.advance
     
-    let value = lexer.slice(start_position, lexer.position)
+    let value: string = lexer.slice(start_position, lexer.position)
     
     if value in KEYWORD_LITERALS:
         lexer.lexemes.add(

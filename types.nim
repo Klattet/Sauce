@@ -61,12 +61,20 @@ type KeywordKind* = enum
     Else = "else"
     Var  = "var"
     Val  = "val"
+    
+    Func = "func"
+    Proc = "proc"
+    Label = "label"
 
 let KEYWORD_LITERALS*: HashSet[string] = toHashSet([
     "if",
     "else",
     "var",
-    "val"
+    "val",
+    
+    "func",
+    "proc",
+    "label"
 ])
 
 type
@@ -86,10 +94,16 @@ type
     Operator* = ref object of PrimaryExpression
     Identifier* = ref object of PrimaryExpression
     
+    EndOfFile* = ref object of Node
+    
     Separator* = ref object of Node
         kind*: SeparatorKind
     
     Keyword* = ref object of Node
         kind*: KeywordKind
     
+    Statement* = ref object of Node
+    
+    Block* = ref object of Node
+        statements: seq[Statement]
     
