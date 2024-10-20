@@ -5,7 +5,7 @@ import strutils
 
 import types
 
-type Lexer = ref object of RootObj
+type Lexer* = ref object of RootObj
     position: uint
     length: uint
     source: string
