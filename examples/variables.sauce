@@ -1,0 +1,6 @@
+def PI is 3.1415
+
+val fifth_fib of Integer is call fib with 5
+
+var foo of Integer is 10
+var foo is 25

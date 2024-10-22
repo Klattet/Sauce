@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.2//EN" "http://www.w3.org/Graphics/SVG/1.2/DTD/svg12.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="full" xml:space="preserve" width="516" height="104">
+<desc>variables</desc>
+<defs>
+<style type="text/css">
+<![CDATA[
+rect { fill:#000000; } 
+g { font-size: 8; font-family: 'Courier New',monospace; white-space: pre;}
+text { fill:#f0f0f8; }
+tspan.num { fill:#90d0ff; }
+tspan.esc { fill:#e0e080; }
+tspan.sng { fill:#90d0ff; }
+tspan.pps { fill:#90d0ff; }
+tspan.slc { fill:#c0c0d0; font-style:italic; }
+tspan.com { fill:#c0c0d0; font-style:italic; }
+tspan.ppc { fill:#f0f0f8; }
+tspan.opt { fill:#a2ff86; }
+tspan.ipl { fill:#c5ff7d; }
+tspan.lin { fill:#c0c0d0; font-style:italic; }
+tspan.erm { fill:#ff0000; font-weight:bold; }
+tspan.err { fill:#ff0000; font-weight:bold; }
+tspan.kwa { fill:#ffa0ff; }
+tspan.kwb { fill:#ffc864; }
+tspan.kwc { fill:#ffffa1; }
+tspan.kwd { fill:#ff5c33; }
+tspan.kwe { fill:#6d98fd; }
+tspan.kwf { fill:#57d2c3; }
+]]>
+</style>
+</defs>
+<g>
+<rect x="0" y="0" width="100%" height="100%" rx="3%"/>
+<text x="10" y="16"><tspan class="kwa">def&#160;</tspan>PI&#160;<tspan class="kwa">is&#160;</tspan><tspan class="num">3.1415</tspan></text>
+<text x="10" y="32"></text>
+<text x="10" y="48"><tspan class="kwa">val&#160;</tspan>fifth_fib&#160;<tspan class="kwa">of&#160;</tspan>Integer&#160;<tspan class="kwa">is&#160;call&#160;</tspan>fib&#160;<tspan class="kwa">with&#160;</tspan><tspan class="num">5</tspan></text>
+<text x="10" y="64"></text>
+<text x="10" y="80"><tspan class="kwa">var&#160;</tspan>foo&#160;<tspan class="kwa">of&#160;</tspan>Integer&#160;<tspan class="kwa">is&#160;</tspan><tspan class="num">10</tspan></text>
+<text x="10" y="96"><tspan class="kwa">var&#160;</tspan>foo&#160;<tspan class="kwa">is&#160;</tspan><tspan class="num">25</tspan></text>
+<text x="10" y="112"></text>
+</g>
+</svg>
