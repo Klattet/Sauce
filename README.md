@@ -1,7 +1,3 @@
----
-layout: inline
----
-
 # The Sauce programming language
 
 ## Goal
