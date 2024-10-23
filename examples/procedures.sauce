@@ -1,0 +1,5 @@
+fun fib(n of Integer) to Integer is
+    ret if n <= 1 so
+        n
+    or
+        fib(n - 1) + fib(n - 2)
