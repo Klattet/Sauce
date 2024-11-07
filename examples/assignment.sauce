@@ -1,6 +1,34 @@
+#[
+Define PI to be a constant approximated value of pi
+that must be known at compile-time.
+Type declaration is not required, because the value
+is a primitive literal expression.
+All constants must have fully capitalised names.
+]#
 def PI is 3.1415
 
-val fifth_fib of Integer is fib(5)
+#[
+Define fifth_fib to be a value equal to the
+return value of the fibonacci function with argument 5.
+The value can only be assigned once in a given context,
+so fifth_fib cannot be re-assigned to a different value.
+Since the return type of the fibonacci function is not
+immediately apparent without reading the function
+declaration located elsewhere in the code, the explicit
+type declaration is enforced.
+All values must have snake_case names.
+]#
+val fifth_fib of Integer is fibonacci(5)
 
+#[
+Define foo to be a variable of type integer that can
+have its value re-assigned multiple times.
+Although explicitly declaring a type for the integer
+literal is unnecessary, it is still legal.
+If a type is declared, it must be done on the first
+assignment in the context, and the following
+re-assignments cannot have a type declaration.
+All variables must have snake_case names.
+]#
 var foo of Integer is 10
 var foo is 25

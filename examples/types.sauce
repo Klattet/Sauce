@@ -1,0 +1,38 @@
+
+# A simple type that has two fields of integers.
+typ Foo(
+    bar of Integer,
+    baz of Integer
+)
+
+#[
+A function that takes an object of type Foo,
+adds the fields together and returns the result.
+]#
+fun add(self of Foo) to Integer is
+    ret self.bar + self.baz
+
+#[
+A function that overloads the previous one with
+an additional argument that should also be added to the sum.
+]#
+fun add(self of Foo, extra of Integer) to Integer is
+    ret self.bar + self.baz + extra
+
+#[
+Create a new instance of type Foo and store it in a variable.
+Type annotation on the variable is not necessary because it's
+initialising an instance of a type directly.
+]#
+val foo is Foo(3, 4)                     # Positional arguments
+val other_foo is Foo(bar is 7, baz is 8) # Keyword arguments
+
+#[
+Calling the functions in different ways.
+Type annotations are necessary because the result type
+is not immediately apparent by reading the line.
+]#
+val fifteen of Integer is add(foo, 8)         # Call function with arguments
+val seven of Integer is foo:add()             # Call method
+val twelve of Integer is foo:add(5)           # Call method with argument
+val twenty of Integer is foo:add(extra is 13) # Call method with keyword argument

@@ -1,0 +1,60 @@
+Description="Sauce"
+
+
+Keywords={
+
+  {  Id=1,
+
+   List={"def", "var", "val", "fun", "of", "is", "or", "ret", "so", "to", "if", "typ",
+
+         -- [..]
+
+        }
+
+  },
+
+  -- [..]
+
+}
+
+
+Strings = {
+
+  Delimiter=[["|']],
+
+  RawPrefix="R",
+
+}
+
+
+Comments = {
+
+   { Block=true,
+
+     Nested=false,
+
+     Delimiter = { [[#\[]], [[\]#]] }  },
+
+   { Block=false,
+
+     Delimiter = { [[#]] } }
+
+}
+
+
+IgnoreCase=false
+
+
+PreProcessor = {
+
+  Prefix=[[@]],
+
+  Continuation="\\",
+
+}
+
+
+Operators=[[\(|\)|\[|\]|\{|\}|\,|\;|\.|\:|\&|<|>|\!|\=|\/|\*|\%|\+|\-|\~]]
+
+
+EnableIndentation=true
