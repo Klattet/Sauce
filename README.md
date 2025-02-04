@@ -15,13 +15,13 @@ Learn about how compilers work and the choices necessary to create a well-define
 
 ## Abstract Syntax Tree
 ### Lexemes
-| Kind       | Meaning                                                                                                                                                                                            |
-|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| identifier | A word that must start with an upper or lower case character, but after that can also consist of digits and underscore `_`. An identifier may or may not be defined to have a corresponding value. |
-| keyword    | A member of an exclusive collection of reserved words that cannot be used as identifiers. They are used by the compiler to enforce an unambiguous grammar and sentence structure.                  |
-| integer    | A number that exists entirely of digits 0-9 optionally separated by underscore `_`.                                                                                                                |
-| separator  | A member of a collection of symbols that are used to separate different expressions from each other in ways defined by the grammar.                                                                |
-
+| Kind       | Meaning                                                                                                                                                                           |
+|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| identifier | A word that consists of alphanumberic characters including underscore `_`.<br/>Cannot begin with a digit.                                                                         |
+| keyword    | A member of an exclusive collection of reserved words that cannot be used as identifiers. They are used by the compiler to enforce an unambiguous grammar and sentence structure. |
+| integer    | A number that exists entirely of digits 0-9 optionally separated by underscore `_`.                                                                                               |
+| separator  | A member of a collection of symbols that are used to separate different expressions from each other in ways defined by the grammar.                                               |
+| operator   |                                                                                                                                                                                   |
 ## Definitions
 A definition is a type of statement that creates a connection between a given identifier and a value, such that the identifier represents a value.
 
