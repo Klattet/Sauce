@@ -1,0 +1,76 @@
+
+# ----------------------------------------------------------------------------------------------------
+# UTILITY
+# These are some aliases that are simply used in the definition of
+# the grammar itself in order to make it more readable by humans.
+# ----------------------------------------------------------------------------------------------------
+
+whitespace  <- [\9-\13\32]
+lower       <- [a-z]
+upper       <- [A-Z]
+digit       <- [0-9]
+wildcard    <- [_]
+
+upperLower              <- [A-Za-z]
+wildUpperLower          <- [A-Za-z_]
+wildUpperLowerDigit     <- [A-Za-z0-9_]
+wildDigit               <- [0-9_]
+
+# ----------------------------------------------------------------------------------------------------
+# BASIC TOKENS
+# Some very simple tokens.
+# ----------------------------------------------------------------------------------------------------
+
+integer     <- digit+ ( wildDigit* digit)? !wildUpperLower
+identifier  <- !(keyword !wildUpperLowerDigit) wildUpperLower wildUpperLowerDigit*
+
+# ----------------------------------------------------------------------------------------------------
+# KEYWORDS
+# Natural language definition:
+#   A keyword is a member of a special collection of case insensitive identifier-like words
+#   that cannot be used like identifiers.
+#
+# Philosophy:
+#   Although some keywords are re-used in multiple context scenarios, the grammar
+#   is designed to ensure you will never misinterpret the meaning of a keyword
+#   while reading code, presuming you know what the keyword represents in general.
+#   All keywords serve a similar purpose in all contexts where they are defined.
+#
+#   All keywords are English words that have been truncated to 3 characters or less.
+#   That is simply an aesthetic choice meant to elicit a pattern where statements
+#   and expressions tend to line up vertically in the source code of a program.
+#   It was inspired by assembly code, as most of the common traditional opcodes in
+#   assembly languages are 3 characters wide (such as JMP, MOV, CMP, ADD for example).
+#   Although Sauce is not an assembly language, it is meant to look similar to one in some ways.
+#
+#   Keywords are case insensitive, but please pick one style and be consistent.
+#   Not being able to use keywords with different capitalisation as identifiers is a non-issue.
+#   If your identifiers collide with keywords, it is a you-issue. Define better identifier names.
+# ----------------------------------------------------------------------------------------------------
+
+# BRANCHING
+if  <- i"if"
+or  <- i"or"
+
+# VARIABLES
+def <- i"def"
+val <- i"val"
+var <- i"var"
+
+# ROUTINES
+fun <- i"fun"
+pro <- i"pro"
+ret <- i"ret"
+
+# TYPES
+typ <- i"typ"
+
+# LINKING
+of  <- i"of"
+is  <- i"is"
+
+
+keyword = (
+    if / or / def / val / var / fun / pro / typ / of / is
+)
+
