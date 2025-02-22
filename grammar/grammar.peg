@@ -1,36 +1,43 @@
+\i # Flag for the parser to ignore capitalisation
 
 # ----------------------------------------------------------------------------------------------------
-# UTILITY
-# These are some aliases that are simply used in the definition of
-# the grammar itself in order to make it more readable by humans.
+# LITERALS
+# Short:
+#   A literal expression is a single lexeme that is itself a valid expression.
 # ----------------------------------------------------------------------------------------------------
 
-whitespace  <- [\9-\13\32]
-lower       <- [a-z]
-upper       <- [A-Z]
-digit       <- [0-9]
-wildcard    <- [_]
-
-upperLower              <- [A-Za-z]
-wildUpperLower          <- [A-Za-z_]
-wildUpperLowerDigit     <- [A-Za-z0-9_]
-wildDigit               <- [0-9_]
+integer     <- [0-9]+({[_]}{}[0-9]+)*![A-Za-z_]
+binary      <- "0b"{[01]+({[_]}{}[01]+)*}![A-Za-z2-9_]
+octal       <- "0o"{[0-7]+({[_]}{}[0-7]+)*}![a-f89_]
+hexadecimal <- "0x"{[a-f0-9]+({[_]}{}[a-f0-9]+)*}![G-Zg-z_]
+identifier  <- !keyword[A-Za-z][A-Za-z0-9]*({[_]}{}[A-Za-z0-9]+)*![_]
+string      <- "\""{(({"\\"}{})([\34\92]/{[a-f0-9][a-f0-9][a-f0-9][a-f0-9]})/(!"\""_))*}"\""
+character   <- "c\""{({"\\"}{})([\34\92]/{[a-f0-9][a-f0-9]})/(!"\"".)}"\""
+bytestring  <- "b\""{(({"\\"}{})([\34\92]/{[a-f0-9][a-f0-9]})/(!"\"".))*}"\""
 
 # ----------------------------------------------------------------------------------------------------
-# BASIC TOKENS
-# Some very simple tokens.
+# OPERATORS
+# Short:
+#   An operator is a lexeme that is composed entirely of a special collection of
+#   symbols, similar to a word but in a different category.
+#
+# Detailed:
+#   An operator represents the identifier of a special function or procedure, but
+#   has a different calling syntax. Either prefix, postfix or infix depending on the
+#   definition of the procedure.
+#
+#   When an operator is used in an expression, it is called an operator expression.
+#   There are two types of operator expressions: Unary and binary.
+#   Unary expressions involve p
 # ----------------------------------------------------------------------------------------------------
-
-integer     <- digit+ ( wildDigit* digit)? !wildUpperLower
-identifier  <- !(keyword !wildUpperLowerDigit) wildUpperLower wildUpperLowerDigit*
 
 # ----------------------------------------------------------------------------------------------------
 # KEYWORDS
-# Natural language definition:
-#   A keyword is a member of a special collection of case insensitive identifier-like words
-#   that cannot be used like identifiers.
+# Short:
+#   A keyword is a member of a special collection of lexemes that cannot
+#   be used like identifiers despite looking like them.
 #
-# Philosophy:
+# Detailed:
 #   Although some keywords are re-used in multiple context scenarios, the grammar
 #   is designed to ensure you will never misinterpret the meaning of a keyword
 #   while reading code, presuming you know what the keyword represents in general.
@@ -49,28 +56,32 @@ identifier  <- !(keyword !wildUpperLowerDigit) wildUpperLower wildUpperLowerDigi
 # ----------------------------------------------------------------------------------------------------
 
 # BRANCHING
-if  <- i"if"
-or  <- i"or"
+if  <- "if"![a-z0-9_]
+or  <- "or"![a-z0-9_]
 
 # VARIABLES
-def <- i"def"
-val <- i"val"
-var <- i"var"
+def <- "def"![a-z0-9_]
+val <- "val"![a-z0-9_]
+var <- "var"![a-z0-9_]
 
 # ROUTINES
-fun <- i"fun"
-pro <- i"pro"
-ret <- i"ret"
+fun <- "fun"![a-z0-9_]
+pro <- "pro"![a-z0-9_]
+ret <- "ret"![a-z0-9_]
 
 # TYPES
-typ <- i"typ"
+typ <- "typ"![a-z0-9_]
 
 # LINKING
-of  <- i"of"
-is  <- i"is"
+of  <- "of"![a-z0-9_]
+is  <- "is"![a-z0-9_]
 
 
-keyword = (
+keyword <- (
     if / or / def / val / var / fun / pro / typ / of / is
 )
 
+# ----------------------------------------------------------------------------------------------------
+# BRANCHING
+# A branching statement is
+# ----------------------------------------------------------------------------------------------------
