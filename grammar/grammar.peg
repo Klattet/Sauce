@@ -14,6 +14,7 @@ identifier  <- !keyword[A-Za-z][A-Za-z0-9]*({[_]}{}[A-Za-z0-9]+)*![_]
 string      <- "\""{(({"\\"}{})([\34\92]/{[a-f0-9][a-f0-9][a-f0-9][a-f0-9]})/(!"\""_))*}"\""
 character   <- "c\""{({"\\"}{})([\34\92]/{[a-f0-9][a-f0-9]})/(!"\"".)}"\""
 bytestring  <- "b\""{(({"\\"}{})([\34\92]/{[a-f0-9][a-f0-9]})/(!"\"".))*}"\""
+wildcard    <- [_]![a-z0-9_]
 
 # ----------------------------------------------------------------------------------------------------
 # OPERATORS
@@ -27,9 +28,63 @@ bytestring  <- "b\""{(({"\\"}{})([\34\92]/{[a-f0-9][a-f0-9]})/(!"\"".))*}"\""
 #   definition of the procedure.
 #
 #   When an operator is used in an expression, it is called an operator expression.
-#   There are two types of operator expressions: Unary and binary.
-#   Unary expressions involve p
+#   There are three types of operator expressions: Unary, binary and identity.
+#   Unary expressions involve prefix and postfix operators.
+#   Binary expressions involve infix operators.
+#   Identity expressions are lone operators that are not next to any other expressions.
+#
+#   Note that two symbols separated by a space are considered different operators.
+#   Just as you would consider two strings of letters separated by a space as two different words.
 # ----------------------------------------------------------------------------------------------------
+
+apostrophe      <- "'"
+equality        <- "="
+cross           <- "+"
+hyphen          <- "-"
+caret           <- "^"
+tilde           <- "~"
+star            <- "*"
+at              <- "@"
+exclamation     <- "!"
+question        <- "?"
+pound           <- "#"
+dollar          <- "$"
+ampersand       <- "&"
+backslash       <- "\\"
+forwardslash    <- "/"
+pipe            <- "|"
+angleleft       <- "<"
+angleright      <- ">"
+point           <- "."
+colon           <- ":"
+
+operator    <- (
+    apostrophe / equality / cross / hyphen / caret / tilde / star / at / exclamation / question / pound / dollar / ampersand / backslash / forwardslash / pipe / angleleft / angleright / point / colon
+)+
+
+# ----------------------------------------------------------------------------------------------------
+# SEPARATORS
+# Short:
+#   A separator is a lexeme that is used to separate different expressions and do not
+#   themselves have an associated value.
+#
+# Detailed:
+#   Although separators have no inherent values, they can augment how
+#   expressions are evaluated and how different expressions relate to each other.
+# ----------------------------------------------------------------------------------------------------
+
+comma               <- ","
+#semicolon           <- ";"
+bracketleft         <- "["
+bracketright        <- "]"
+braceleft           <- "{"
+braceright          <- "}"
+parenthesisleft     <- "("
+parenthesisright    <- ")"
+
+separator   <- (
+    comma / bracketleft / bracketright / braceleft / braceright / parenthesisleft / parenthesisright
+)
 
 # ----------------------------------------------------------------------------------------------------
 # KEYWORDS
@@ -55,16 +110,18 @@ bytestring  <- "b\""{(({"\\"}{})([\34\92]/{[a-f0-9][a-f0-9]})/(!"\"".))*}"\""
 #   If your identifiers collide with keywords, it is a you-issue. Define better identifier names.
 # ----------------------------------------------------------------------------------------------------
 
-# BRANCHING
-if  <- "if"![a-z0-9_]
-or  <- "or"![a-z0-9_]
-
 # VARIABLES
 def <- "def"![a-z0-9_]
 val <- "val"![a-z0-9_]
 var <- "var"![a-z0-9_]
+ali <- "ali"![a-z0-9_]
 
-# ROUTINES
+# PATTERN MATCHING
+mat <- "mat"![a-z0-9_]
+cas <- "cas"![a-z0-9_]
+
+# SUBROUTINES
+use <- "use"![a-z0-9_]
 fun <- "fun"![a-z0-9_]
 pro <- "pro"![a-z0-9_]
 ret <- "ret"![a-z0-9_]
@@ -75,13 +132,139 @@ typ <- "typ"![a-z0-9_]
 # LINKING
 of  <- "of"![a-z0-9_]
 is  <- "is"![a-z0-9_]
+do  <- "do"![a-z0-9_]
 
 
 keyword <- (
-    if / or / def / val / var / fun / pro / typ / of / is
+    def /
+    val /
+    var /
+    ali /
+
+    use /
+    fun /
+    pro /
+    ret /
+
+    typ /
+
+    of /
+    is /
+    do
 )
 
 # ----------------------------------------------------------------------------------------------------
-# BRANCHING
-# A branching statement is
+# EXPRESSIONS
+# Short:
+#   An expression is a collection of lexemes that will perform computations to
+#   reduce to a final definite value, or is already a value.
 # ----------------------------------------------------------------------------------------------------
+
+\skip([\9-\13\32]*)
+
+literalexpression               <- integer / binary / octal / hexadecimal / identifier / string / character / bytestring / wildcard
+
+unaryexpression                 <- operator expression / expression operator (&operator / !expression)
+binaryexpression                <- expression operator expression
+identityexpression              <- operator !expression
+
+parenthesisedexpression         <- parenthesisleft expression parenthesisright
+bracketedexpression             <- bracketleft expression bracketright
+bracedexpression                <- braceleft expression braceright
+sequenceexpression              <- expression comma (expression (comma expression)*)? / parenthesisleft comma? parenthesisright
+typeexpression                  <- ((parenthesisleft identifier+ parenthesisright) / identifier)+
+identifiersequenceexpression    <- identifier (comma identifier)* / parenthesisleft (identifier (comma identifier)*)? parenthesisright
+parameterexpression             <- identifier of typeexpression (is expression)? (comma identifier of typeexpression (is expression)?)* / parenthesisleft (identifier of typeexpression (is expression)? (comma identifier of typeexpression (is expression)?)*)? parenthesisright
+
+expression  <- literalexpression / unaryexpression / binaryexpression / identityexpression / parenthesisedexpression / bracketedexpression / bracedexpression / sequenceexpression / typeexpression / identifiersequenceexpression / parameterexpression
+
+# ----------------------------------------------------------------------------------------------------
+# PATTERN MATCHING
+# A branching statement takes a conditional expression and chooses a branch of logic based on that value.
+# ----------------------------------------------------------------------------------------------------
+
+match   <- mat expression (cas expression statement*)+ # Case scopes may be incorrect until further analysis with known data types.
+
+# ----------------------------------------------------------------------------------------------------
+# VARIABLES
+# ----------------------------------------------------------------------------------------------------
+
+definition  <- def identifier (of typeexpression)? is expression
+value       <- val identifier (of typeexpression)? is expression
+variable    <- var identifier (of typeexpression)? is expression
+alias       <- ali identifier is typeexpression
+
+
+# ----------------------------------------------------------------------------------------------------
+# STATEMENTS
+# ----------------------------------------------------------------------------------------------------
+
+statement   <- (
+    match /
+
+    definition /
+    value /
+    variable /
+    alias
+)
+
+# ----------------------------------------------------------------------------------------------------
+# TYPES
+# ----------------------------------------------------------------------------------------------------
+
+private     <- pri identifier ((of typeexpression)? is expression / of typeexpression)
+public      <- pub identifier ((of typeexpression)? is expression / of typeexpression)
+
+setter      <- set identifier identifier statement*
+getter      <- get identifier statement*
+constructor <- new parameterexpression statement*
+destructor  <- del statement*
+
+method      <- met identifier parameterexpression statement*
+
+type    <- (
+    typ identifier
+    (public / private)*
+    ((setter / getter) block*)*
+    ((constructor / destructor) block*)*
+    (method block*)*
+)
+
+# ----------------------------------------------------------------------------------------------------
+# SUBROUTINES AND NAMESPACES
+# ----------------------------------------------------------------------------------------------------
+
+datafield   <- use identifiersequenceexpression? statement*
+function    <- fun identifier parameterexpression statement*
+procedure   <- pro identifier parameterexpression statement*
+block       <- blo identifiersequenceexpression? statement*
+global      <- glo identifiersequenceexpression? statement*
+export      <- exp identifiersequenceexpression?
+
+# ----------------------------------------------------------------------------------------------------
+# PROGRAM
+# ----------------------------------------------------------------------------------------------------
+
+program     <- (
+    export?
+    global?
+    (datafield? ((function / procedure) block* / type))*
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
