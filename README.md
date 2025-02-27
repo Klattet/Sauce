@@ -5,16 +5,11 @@ Learn about how compilers work and the choices necessary to create a well-define
 
 
 # Grammar
-## Preface
-| Representation                                | Meaning                                                                |
-|-----------------------------------------------|------------------------------------------------------------------------|
-| Plain words or symbols                        | A literal token, representing itself in the exact way it is displayed. |
-| Words surrounded by angle brackets `<` `>`    | A single token of that description is required in that position.       |
-| Words surrounded by squiggly brackets `{` `}` | An optional single instance of the given tokens. One or none.          |
-| Words surrounded by square brackets `[` `]`   | An optional repeating sequence of the given tokens. Many or none.      |
+## Lexemes
+### Identifier
+```
 
-## Abstract Syntax Tree
-### Lexemes
+```
 | Kind       | Meaning                                                                                                                                                                           |
 |------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | identifier | A word that consists of alphanumberic characters including underscore `_`.<br/>Cannot begin with a digit.                                                                         |

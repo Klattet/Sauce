@@ -2,42 +2,39 @@
 
 # ----------------------------------------------------------------------------------------------------
 # LITERALS
-# Short:
-#   A literal expression is a single lexeme that is itself a valid expression.
+# A literal expression is a single lexeme that is itself a valid expression.
 # ----------------------------------------------------------------------------------------------------
 
-integer     <- [0-9]+({[_]}{}[0-9]+)*![A-Za-z_]
-binary      <- "0b"{[01]+({[_]}{}[01]+)*}![A-Za-z2-9_]
-octal       <- "0o"{[0-7]+({[_]}{}[0-7]+)*}![a-f89_]
-hexadecimal <- "0x"{[a-f0-9]+({[_]}{}[a-f0-9]+)*}![G-Zg-z_]
-identifier  <- !keyword[A-Za-z][A-Za-z0-9]*({[_]}{}[A-Za-z0-9]+)*![_]
-string      <- "\""{(({"\\"}{})([\34\92]/{[a-f0-9][a-f0-9][a-f0-9][a-f0-9]})/(!"\""_))*}"\""
-character   <- "c\""{({"\\"}{})([\34\92]/{[a-f0-9][a-f0-9]})/(!"\"".)}"\""
-bytestring  <- "b\""{(({"\\"}{})([\34\92]/{[a-f0-9][a-f0-9]})/(!"\"".))*}"\""
-wildcard    <- [_]![a-z0-9_]
+integer     <- [0-9]+ ({[_]}{} [0-9]+)* ![a-z_]
+binary      <- "0b" { [01]+ ({[_]}{} [01]+)* } ![a-z2-9_]
+octal       <- "0o" { [0-7]+ ({[_]}{} [0-7]+)* } ![a-z89_]
+hexadecimal <- "0x" { [a-f0-9]+ ({[_]}{} [a-f0-9]+)* } ![g-z_]
+identifier  <- !keyword [a-z] [a-z0-9]* ({[_]}{} [a-z0-9]+)* ![_]
+generic     <- "'" identifier
+string      <- "\"" { ({"\\"}{} ([\34\92] / { [a-f0-9] [a-f0-9] [a-f0-9] [a-f0-9] }) / (!"\"" _))* } "\""
+character   <- "c\"" { {"\\"}{} ([\34\92] / { [a-f0-9] [a-f0-9] }) / (!"\"" .) } "\""
+bytestring  <- "b\"" { ({"\\"}{} ([\34\92] / { [a-f0-9] [a-f0-9] }) / (!"\"" .))* } "\""
+wildcard    <- [_] ![a-z0-9_]
 
 # ----------------------------------------------------------------------------------------------------
 # OPERATORS
-# Short:
-#   An operator is a lexeme that is composed entirely of a special collection of
-#   symbols, similar to a word but in a different category.
+# An operator is a lexeme that is composed entirely of a special collection of
+# symbols, similar to a word but in a different category.
 #
-# Detailed:
-#   An operator represents the identifier of a special function or procedure, but
-#   has a different calling syntax. Either prefix, postfix or infix depending on the
-#   definition of the procedure.
+# An operator represents the identifier of a special function or procedure, but
+# has a different calling syntax. Either prefix, postfix or infix depending on the
+# definition of the procedure.
 #
-#   When an operator is used in an expression, it is called an operator expression.
-#   There are three types of operator expressions: Unary, binary and identity.
-#   Unary expressions involve prefix and postfix operators.
-#   Binary expressions involve infix operators.
-#   Identity expressions are lone operators that are not next to any other expressions.
+# When an operator is used in an expression, it is called an operator expression.
+# There are three types of operator expressions: Unary, binary and identity.
+# Unary expressions involve prefix and postfix operators.
+# Binary expressions involve infix operators.
+# Identity expressions are lone operators that are not next to any other expressions.
 #
-#   Note that two symbols separated by a space are considered different operators.
-#   Just as you would consider two strings of letters separated by a space as two different words.
+# Note that two symbols separated by a space are considered different operators.
+# Just as you would consider two strings of letters separated by a space as two different words.
 # ----------------------------------------------------------------------------------------------------
 
-apostrophe      <- "'"
 equality        <- "="
 cross           <- "+"
 hyphen          <- "-"
@@ -50,71 +47,92 @@ question        <- "?"
 pound           <- "#"
 dollar          <- "$"
 ampersand       <- "&"
-backslash       <- "\\"
-forwardslash    <- "/"
+backSlash       <- "\\"
+forwardSlash    <- "/"
 pipe            <- "|"
-angleleft       <- "<"
-angleright      <- ">"
+angleLeft       <- "<"
+angleRight      <- ">"
 point           <- "."
 colon           <- ":"
 
 operator    <- (
-    apostrophe / equality / cross / hyphen / caret / tilde / star / at / exclamation / question / pound / dollar / ampersand / backslash / forwardslash / pipe / angleleft / angleright / point / colon
+    equality /
+    cross /
+    hyphen /
+    caret /
+    tilde /
+    star /
+    at /
+    exclamation /
+    question /
+    pound /
+    dollar /
+    ampersand /
+    backSlash /
+    forwardSlash /
+    pipe /
+    angleLeft /
+    angleRight /
+    point /
+    colon
 )+
 
 # ----------------------------------------------------------------------------------------------------
 # SEPARATORS
-# Short:
-#   A separator is a lexeme that is used to separate different expressions and do not
-#   themselves have an associated value.
+# A separator is a lexeme that is used to separate different expressions and do not
+# themselves have an associated value.
 #
-# Detailed:
-#   Although separators have no inherent values, they can augment how
-#   expressions are evaluated and how different expressions relate to each other.
+# Although separators have no inherent values, they can augment how
+# expressions are evaluated and how different expressions relate to each other.
 # ----------------------------------------------------------------------------------------------------
 
 comma               <- ","
-#semicolon           <- ";"
-bracketleft         <- "["
-bracketright        <- "]"
-braceleft           <- "{"
-braceright          <- "}"
-parenthesisleft     <- "("
-parenthesisright    <- ")"
+semicolon           <- ";"
+bracketLeft         <- "["
+bracketRight        <- "]"
+braceLeft           <- "{"
+braceRight          <- "}"
+parenthesisLeft     <- "("
+parenthesisRight    <- ")"
 
 separator   <- (
-    comma / bracketleft / bracketright / braceleft / braceright / parenthesisleft / parenthesisright
+    comma /
+    semicolon /
+    bracketLeft /
+    bracketRight /
+    braceLeft /
+    braceRight /
+    parenthesisLeft /
+    parenthesisRight
 )
 
 # ----------------------------------------------------------------------------------------------------
 # KEYWORDS
-# Short:
-#   A keyword is a member of a special collection of lexemes that cannot
-#   be used like identifiers despite looking like them.
+# A keyword is a member of a special collection of lexemes that cannot
+# be used like identifiers despite looking like them.
 #
-# Detailed:
-#   Although some keywords are re-used in multiple context scenarios, the grammar
-#   is designed to ensure you will never misinterpret the meaning of a keyword
-#   while reading code, presuming you know what the keyword represents in general.
-#   All keywords serve a similar purpose in all contexts where they are defined.
+# Although some keywords are re-used in multiple context scenarios, the grammar
+# is designed to ensure you will never misinterpret the meaning of a keyword
+# while reading code, presuming you know what the keyword represents in general.
+# All keywords serve a similar purpose in all contexts where they are defined.
 #
-#   All keywords are English words that have been truncated to 3 characters or less.
-#   That is simply an aesthetic choice meant to elicit a pattern where statements
-#   and expressions tend to line up vertically in the source code of a program.
-#   It was inspired by assembly code, as most of the common traditional opcodes in
-#   assembly languages are 3 characters wide (such as JMP, MOV, CMP, ADD for example).
-#   Although Sauce is not an assembly language, it is meant to look similar to one in some ways.
+# All keywords are English words that have been truncated to 3 characters or less.
+# That is simply an aesthetic choice meant to elicit a pattern where statements
+# and expressions tend to line up vertically in the source code of a program.
+# It was inspired by assembly code, as most of the common traditional opcodes in
+# assembly languages are 3 characters wide (such as JMP, MOV, CMP, ADD for example).
+# Although Sauce is not an assembly language, it is meant to look similar to one in some ways.
 #
-#   Keywords are case insensitive, but please pick one style and be consistent.
-#   Not being able to use keywords with different capitalisation as identifiers is a non-issue.
-#   If your identifiers collide with keywords, it is a you-issue. Define better identifier names.
+# Keywords are case insensitive, but please pick one style and be consistent.
+# Not being able to use keywords with different capitalisation as identifiers is a non-issue.
+# If your identifiers collide with keywords, it is a you-issue. Define better identifier names.
 # ----------------------------------------------------------------------------------------------------
 
 # VARIABLES
-def <- "def"![a-z0-9_]
-val <- "val"![a-z0-9_]
-var <- "var"![a-z0-9_]
-ali <- "ali"![a-z0-9_]
+con <- "con"![a-z0-9_] # Constant   - Compile time known value
+fin <- "fin"![a-z0-9_] # Final      - Assign value only once in a scope
+var <- "var"![a-z0-9_] # Variable   - Assign any number of times in a scope
+ali <- "ali"![a-z0-9_] # Alias      - Create an alias to a type identifier
 
 # PATTERN MATCHING
 mat <- "mat"![a-z0-9_]
@@ -132,12 +150,10 @@ typ <- "typ"![a-z0-9_]
 # LINKING
 of  <- "of"![a-z0-9_]
 is  <- "is"![a-z0-9_]
-do  <- "do"![a-z0-9_]
 
 
 keyword <- (
-    def /
-    val /
+    con /
     var /
     ali /
 
@@ -149,20 +165,20 @@ keyword <- (
     typ /
 
     of /
-    is /
-    do
+    is
 )
 
 # ----------------------------------------------------------------------------------------------------
 # EXPRESSIONS
-# Short:
-#   An expression is a collection of lexemes that will perform computations to
-#   reduce to a final definite value, or is already a value.
+# An expression is a collection of lexemes that will perform computations to
+# reduce to a final definite value, or is already a value.
 # ----------------------------------------------------------------------------------------------------
 
 \skip([\9-\13\32]*)
 
-literalexpression               <- integer / binary / octal / hexadecimal / identifier / string / character / bytestring / wildcard
+literalExpression               <- integer / binary / octal / hexadecimal / identifier / string / character / bytestring / wildcard
+
+typeExpression                  <- (generic / identifier / integer) (comma (generic / identifier / integer))*
 
 unaryexpression                 <- operator expression / expression operator (&operator / !expression)
 binaryexpression                <- expression operator expression
@@ -189,8 +205,8 @@ match   <- mat expression (cas expression statement*)+ # Case scopes may be inco
 # VARIABLES
 # ----------------------------------------------------------------------------------------------------
 
-definition  <- def identifier (of typeexpression)? is expression
-value       <- val identifier (of typeexpression)? is expression
+constant    <- con identifier (of typeexpression)? is expression
+final       <- fin identifier (of typeexpression)? is expression
 variable    <- var identifier (of typeexpression)? is expression
 alias       <- ali identifier is typeexpression
 
@@ -209,7 +225,7 @@ statement   <- (
 )
 
 # ----------------------------------------------------------------------------------------------------
-# TYPES
+# STRUCTURED TYPES
 # ----------------------------------------------------------------------------------------------------
 
 private     <- pri identifier ((of typeexpression)? is expression / of typeexpression)
@@ -231,6 +247,12 @@ type    <- (
 )
 
 # ----------------------------------------------------------------------------------------------------
+# ENUMERATED TYPES
+# ----------------------------------------------------------------------------------------------------
+
+enum    <- enu identifier (of typeexpression)?
+
+# ----------------------------------------------------------------------------------------------------
 # SUBROUTINES AND NAMESPACES
 # ----------------------------------------------------------------------------------------------------
 
@@ -238,8 +260,9 @@ datafield   <- use identifiersequenceexpression? statement*
 function    <- fun identifier parameterexpression statement*
 procedure   <- pro identifier parameterexpression statement*
 block       <- blo identifiersequenceexpression? statement*
-global      <- glo identifiersequenceexpression? statement*
-export      <- exp identifiersequenceexpression?
+toplevel    <- top statement*
+export      <- exp identifiersequenceexpression
+import      <- imp identifiersequenceexpression
 
 # ----------------------------------------------------------------------------------------------------
 # PROGRAM
