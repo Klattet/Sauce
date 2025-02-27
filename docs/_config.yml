@@ -28,7 +28,7 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  Klattet
 
 # Build settings
-theme: minima
+#Stheme: minima
 remote_theme: jekyll/minima
 
 minima:
