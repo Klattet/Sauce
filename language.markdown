@@ -7,6 +7,6 @@ type: reference
 
 ## Lexemes
 ### Identifier
-```abnf
+~~~ abnf
 identifier = ALPHA *(ALPHA / DIGIT) *("_" 1*(ALPHA / DIGIT))
-```
+~~~
