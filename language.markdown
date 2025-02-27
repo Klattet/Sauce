@@ -7,6 +7,6 @@ type: reference
 
 ## Lexemes
 ### Identifier
-{% highlight abnf %}
+```abnf
 identifier = ALPHA *(ALPHA / DIGIT) *("_" 1*(ALPHA / DIGIT))
-{% endhighlight %}
+```
