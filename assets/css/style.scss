@@ -1,8 +1,8 @@
 ---
 ---
 
-@import "{{ site.theme }}";
+@import "minima";
 @import
-"minima/skins/{{ site.minima.skin | default: 'classic' }}",
+"minima/skins/dark",
 "minima/initialize";
 @import "custom-pygments.css";
