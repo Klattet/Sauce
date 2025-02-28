@@ -3,11 +3,12 @@ title: Sauce
 description: >-
   A programming language.
 baseurl: ""
+url: ""
 github_username:  Klattet
 
 # Build settings
 theme: minima
-remote_theme: jekyll/minima
+#remote_theme: jekyll/minima
 
 minima:
   skin: dark
