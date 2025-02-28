@@ -1,4 +1,6 @@
 
+origin: https://github.com/Klattet/Sauce.git
+
 #theme: minima
 remote_theme: jekyll/minima
 
