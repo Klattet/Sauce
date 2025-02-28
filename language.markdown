@@ -5,12 +5,13 @@ permalink: /language
 type: reference
 ---
 
-## Lexemes
-### Identifier
 {% highlight python %}
 def test():
-    return 0
+return 0
 {% endhighlight %}
+
+## Lexemes
+### Identifier
 
 {% highlight abnf %}
 identifier = ALPHA *(ALPHA / DIGIT) *("_" 1*(ALPHA / DIGIT))
