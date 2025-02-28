@@ -7,12 +7,11 @@ type: reference
 
 ## Lexemes
 ### Identifier
-```py
+{% highlight python %}
 def test():
     return 0
-```
+{% endhighlight %}
 
-```abnf
+{% highlight abnf %}
 identifier = ALPHA *(ALPHA / DIGIT) *("_" 1*(ALPHA / DIGIT))
-```
-
+{% endhighlight %}
