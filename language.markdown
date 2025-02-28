@@ -7,6 +7,12 @@ type: reference
 
 ## Lexemes
 ### Identifier
-~~~ abnf
+```py
+def test():
+    return 0
+```
+
+```abnf
 identifier = ALPHA *(ALPHA / DIGIT) *("_" 1*(ALPHA / DIGIT))
-~~~
+```
+
