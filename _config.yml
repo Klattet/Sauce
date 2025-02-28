@@ -1,7 +1,12 @@
 
-repository: Klattet/Sauce
+title: Sauce
+description: >-
+  A programming language.
+baseurl: ""
+github_username:  Klattet
 
-#theme: minima
+# Build settings
+theme: minima
 remote_theme: jekyll/minima
 
 minima:
