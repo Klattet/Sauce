@@ -42,7 +42,7 @@ toc: true
 
 assets:
   self_host:
-    enabled: # boolean, keep empty means false
+    enabled: true
     # specify the Jekyll environment, empty means both
     # only works if `assets.self_host.enabled` is 'true'
     env: # [development | production]
