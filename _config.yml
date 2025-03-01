@@ -36,11 +36,11 @@ toc: true
 assets:
   self_host:
     enabled: true
-    env: production
+    env: # [development | production]
 
 paginate: 10
 
-baseurl: ""
+baseurl: "/Sauce"
 
 # ------------ The following options are not recommended to be modified ------------------
 
