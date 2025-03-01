@@ -25,7 +25,7 @@ social:
 
 theme_mode: # [light | dark]
 
-cdn:
+cdn: "https://Klattet.github.io/Sauce/tree/docs"
 
 avatar: "assets/img/Sauce.png"
 
