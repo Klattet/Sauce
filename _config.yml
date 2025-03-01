@@ -23,7 +23,7 @@ social:
   links:
     - https://github.com/Klattet
 
-theme_mode: # [light | dark]
+theme_mode: dark
 
 cdn:
 
