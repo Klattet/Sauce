@@ -35,7 +35,7 @@ toc: true
 
 assets:
   self_host:
-    enabled: true
+    enabled:
     env: # [development | production]
 
 paginate: 10
