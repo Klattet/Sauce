@@ -25,6 +25,8 @@ social:
 
 theme_mode: # [light | dark]
 
+cdn:
+
 avatar: "assets/img/Sauce.png"
 
 social_preview_image: "assets/img/Sauce.png"
@@ -33,8 +35,8 @@ toc: true
 
 assets:
   self_host:
-    enabled: false
-    env: # [development | production]
+    enabled: true
+    env: production
 
 paginate: 10
 
